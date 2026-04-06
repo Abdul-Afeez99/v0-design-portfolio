@@ -10,12 +10,12 @@ export const portfolioData = {
     {
       id: 1,
       name: "Drova",
-      shortDescription: "WhatsApp-native eco-friendly bicycle delivery service",
-      fullDescription: "An innovative WhatsApp-native intra-city delivery service in Nigeria that matches customers with local bicycle riders for fast, affordable, and eco-friendly deliveries. Built with FastAPI and PostgreSQL, featuring an LLM-driven WhatsApp bot for intelligent order management, dynamic pricing, real-time tracking, and rider assignment—all without requiring an app installation.",
+      shortDescription: "Delivery-as-a-Service infrastructure platform for Africa",
+      fullDescription: "Drova is Africa's infrastructure layer for the last-mile delivery industry, a $3.2 billion market built on WhatsApp groups, cash payments, and trust. It provides a full-stack Delivery-as-a-Service (DaaS) platform that enables any local delivery operator—from five-rider motorcycle fleets to 50-van logistics companies—to run a professional, scalable business without writing code. Built with NestJS, FastAPI, and PostgreSQL, it features a branded storefront, real-time rider fleet mapping, and a trustworthy payment system. Think Shopify for logistics: in under ten minutes, a business can go from zero to fully operational with live tracking, professional APIs, and integrated payment processing.",
       link: "https://usedrova.app/",
       status: "in-development",
       statusLabel: "In Development",
-      tech: ["FastAPI", "PostgreSQL", "WhatsApp Cloud API", "OpenRouter LLM", "Python"],
+      tech: ["NestJS", "FastAPI", "PostgreSQL", "WhatsApp Cloud API", "OpenRouter LLM", "Python", "TypeScript"],
       images: [],
     },
     {
