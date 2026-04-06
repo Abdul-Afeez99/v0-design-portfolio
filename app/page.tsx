@@ -203,11 +203,11 @@ export default function Home() {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="pt-24">
+      <main className="pt-20 sm:pt-24">
         {/* Hero Section */}
         <section
           id="home"
-          className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+          className="min-h-[75svh] sm:min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 lg:px-8 pt-6 sm:pt-0 pb-10 sm:pb-0 relative overflow-hidden"
         >
           {/* Animated background elements */}
           <div className="absolute inset-0 -z-10">
@@ -234,7 +234,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
               <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent border border-accent/30 text-sm font-medium">
                 Welcome to my portfolio
@@ -243,13 +243,13 @@ export default function Home() {
 
             <HeroText
               text={`Hi, I'm ${portfolioData.name}`}
-              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 sm:mb-8 leading-tight"
               delay={0.1}
             />
 
             <HeroText
               text={portfolioData.title}
-              className="text-xl sm:text-2xl md:text-3xl text-accent mb-8"
+              className="text-xl sm:text-2xl md:text-3xl text-accent mb-6 sm:mb-8"
               delay={0.2}
             />
 
@@ -257,7 +257,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-base sm:text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
+              className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed"
             >
               {portfolioData.description}
             </motion.p>
@@ -314,11 +314,11 @@ export default function Home() {
         {/* About Section */}
         <section
           id="about"
-          className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-card/30"
+          className="pt-12 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-card/30"
         >
           <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-8">About Me</h2>
+            <AnimatedSection className="mb-8 sm:mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 sm:mb-8">About Me</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 I build backend systems for products where reliability isn&apos;t a nice-to-have—it&apos;s the job. I&apos;ve helped power fintech, logistics, and marketplace platforms by shaping the infrastructure behind payments, integrations, and high-traffic APIs.
               </p>
@@ -338,10 +338,10 @@ export default function Home() {
         {/* Experience Section */}
         <section
           id="experience"
-          className="pt-12 pb-12 px-4 sm:px-6 lg:px-8"
+          className="pt-8 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8"
         >
           <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-12">
+            <AnimatedSection className="mb-8 sm:mb-12">
               <h2 className="text-4xl md:text-5xl font-bold">Experience</h2>
             </AnimatedSection>
 
@@ -352,10 +352,10 @@ export default function Home() {
         {/* Projects Section */}
         <section
           id="projects"
-          className="pt-12 pb-24 px-4 sm:px-6 lg:px-8 bg-card/30"
+          className="pt-8 sm:pt-12 pb-12 sm:pb-24 px-4 sm:px-6 lg:px-8 bg-card/30"
         >
           <div className="max-w-6xl mx-auto">
-            <AnimatedSection className="mb-16">
+            <AnimatedSection className="mb-8 sm:mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
               <p className="text-lg text-muted-foreground">
                 Here are some of my recent projects that showcase my skills and expertise.
@@ -381,10 +381,10 @@ export default function Home() {
         {/* Skills Section */}
         <section
           id="skills"
-          className="py-24 px-4 sm:px-6 lg:px-8"
+          className="py-12 sm:py-24 px-4 sm:px-6 lg:px-8"
         >
           <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-16">
+            <AnimatedSection className="mb-8 sm:mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-8">Skills & Technologies</h2>
 
               <motion.div
@@ -420,12 +420,12 @@ export default function Home() {
         {/* Contact Section */}
         <section
           id="contact"
-          className="py-24 px-4 sm:px-6 lg:px-8 bg-card/30"
+          className="py-12 sm:py-24 px-4 sm:px-6 lg:px-8 bg-card/30"
         >
           <div className="max-w-4xl mx-auto text-center">
             <AnimatedSection>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Let&apos;s Work Together</h2>
-              <p className="text-base sm:text-lg text-muted-foreground mb-10 sm:mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-5 sm:mb-6">Let&apos;s Work Together</h2>
+              <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-12">
                 I&apos;m always interested in hearing about new projects and opportunities.
               </p>
 
