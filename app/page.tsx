@@ -1,17 +1,44 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { portfolioData } from '@/lib/data';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { ProjectCard } from '@/components/ProjectCard';
 import { HeroText } from '@/components/HeroText';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ExperienceTimelineScroller } from '@/components/ExperienceTimelineScroller';
-import { ExternalLink, Github, Mail, MapPin, Download, Linkedin, Phone } from 'lucide-react';
+import {
+  ExternalLink,
+  Github,
+  Mail,
+  MapPin,
+  Download,
+  Linkedin,
+  Phone,
+  Menu,
+  X,
+} from 'lucide-react';
 
 const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
 
 export default function Home() {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileNavOpen ? 'hidden' : '';
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileNavOpen(false);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [mobileNavOpen]);
+
   const githubUrl =
     portfolioData.socialLinks.find((link) => link.name === 'GitHub')?.url ??
     'https://github.com';
@@ -46,9 +73,9 @@ export default function Home() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border relative"
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between relative z-50">
           <motion.a
             href="#home"
             className="text-xl font-bold bg-gradient-to-r from-accent to-cyan-400 bg-clip-text text-transparent"
@@ -73,31 +100,106 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <motion.a
-              href={portfolioData.cvUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="btn btn-primary px-6 py-2"
-            >
-              <ExternalLink size={16} />
-              View Resume
-            </motion.a>
-            <motion.a
-              href={portfolioData.cvUrl}
-              download
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="btn btn-outline px-4 py-2"
-            >
-              <Download size={16} />
-              Download
-            </motion.a>
-            <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-4">
+              <motion.a
+                href={portfolioData.cvUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn btn-primary px-6 py-2"
+              >
+                <ExternalLink size={16} />
+                View Resume
+              </motion.a>
+              <motion.a
+                href={portfolioData.cvUrl}
+                download
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn btn-outline px-4 py-2"
+              >
+                <Download size={16} />
+                Download
+              </motion.a>
+              <ThemeToggle />
+            </div>
+
+            <div className="flex md:hidden items-center gap-3">
+              <ThemeToggle />
+              <motion.button
+                type="button"
+                onClick={() => setMobileNavOpen((v) => !v)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn btn-outline p-2"
+                aria-label="Toggle navigation"
+                aria-expanded={mobileNavOpen}
+              >
+                {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+              </motion.button>
+            </div>
           </div>
         </div>
+
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-background/40 backdrop-blur-sm md:hidden z-40"
+                onClick={() => setMobileNavOpen(false)}
+              />
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute top-full left-0 right-0 md:hidden border-b border-border bg-background/95 backdrop-blur-md z-50"
+              >
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                  <div className="flex flex-col">
+                    {navLinks.map((link) => (
+                      <a
+                        key={link}
+                        href={`#${link.toLowerCase()}`}
+                        className="py-3 text-base font-medium link-muted"
+                        onClick={() => setMobileNavOpen(false)}
+                      >
+                        {link}
+                      </a>
+                    ))}
+                  </div>
+
+                  <div className="pt-4 flex flex-col gap-3">
+                    <a
+                      href={portfolioData.cvUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary w-full px-4 py-3"
+                      onClick={() => setMobileNavOpen(false)}
+                    >
+                      <ExternalLink size={16} />
+                      View Resume
+                    </a>
+                    <a
+                      href={portfolioData.cvUrl}
+                      download
+                      className="btn btn-outline w-full px-4 py-3"
+                      onClick={() => setMobileNavOpen(false)}
+                    >
+                      <Download size={16} />
+                      Download
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* Main Content */}
@@ -141,13 +243,13 @@ export default function Home() {
 
             <HeroText
               text={`Hi, I'm ${portfolioData.name}`}
-              className="text-5xl md:text-7xl font-bold mb-8 leading-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-tight"
               delay={0.1}
             />
 
             <HeroText
               text={portfolioData.title}
-              className="text-2xl md:text-3xl text-accent mb-8"
+              className="text-xl sm:text-2xl md:text-3xl text-accent mb-8"
               delay={0.2}
             />
 
@@ -155,7 +257,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
+              className="text-base sm:text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
             >
               {portfolioData.description}
             </motion.p>
@@ -170,7 +272,7 @@ export default function Home() {
                 href="#projects"
                 whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
                 whileTap={{ scale: 0.95 }}
-                className="btn btn-primary px-8 py-3 font-semibold transition-all"
+                className="btn btn-primary w-full sm:w-auto px-8 py-3 font-semibold transition-all"
               >
                 View My Work
               </motion.a>
@@ -178,7 +280,7 @@ export default function Home() {
                 href={`mailto:${portfolioData.email}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="btn btn-outline px-8 py-3 font-semibold transition-all"
+                className="btn btn-outline w-full sm:w-auto px-8 py-3 font-semibold transition-all"
               >
                 Get In Touch
               </motion.a>
@@ -323,7 +425,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <AnimatedSection>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Let&apos;s Work Together</h2>
-              <p className="text-lg text-muted-foreground mb-12">
+              <p className="text-base sm:text-lg text-muted-foreground mb-10 sm:mb-12">
                 I&apos;m always interested in hearing about new projects and opportunities.
               </p>
 
@@ -332,24 +434,24 @@ export default function Home() {
                   href={`mailto:${portfolioData.email}`}
                   whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
                   whileTap={{ scale: 0.95 }}
-                  className="btn btn-primary px-8 py-3 font-semibold transition-all"
+                  className="btn btn-primary w-full sm:w-auto px-6 sm:px-8 py-3 font-semibold transition-all"
                 >
                   <Mail size={20} />
                   Send me an email
                 </motion.a>
 
-                <div className="w-full overflow-x-auto">
-                  <div className="mx-auto w-max flex flex-nowrap items-center justify-center gap-8 py-2 text-sm text-muted-foreground whitespace-nowrap">
+                <div className="w-full">
+                  <div className="mx-auto flex flex-wrap sm:flex-nowrap items-center justify-center gap-3 sm:gap-6">
                     <a
                       href={`mailto:${portfolioData.email}`}
-                      className="inline-flex items-center gap-2 link-muted"
+                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
                     >
                       <Mail size={16} />
                       {portfolioData.email}
                     </a>
                     <a
                       href={`tel:${portfolioData.phone}`}
-                      className="inline-flex items-center gap-2 link-muted"
+                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
                     >
                       <Phone size={16} />
                       {portfolioData.phone}
@@ -358,7 +460,7 @@ export default function Home() {
                       href={githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 link-muted"
+                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
                     >
                       <Github size={16} />
                       {githubUrl.replace('https://', '').replace('http://', '')}
@@ -367,12 +469,12 @@ export default function Home() {
                       href={linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 link-muted"
+                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
                     >
                       <Linkedin size={16} />
                       {linkedinUrl.replace('https://', '').replace('http://', '')}
                     </a>
-                    <span className="inline-flex items-center gap-2">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm text-muted-foreground">
                       <MapPin size={16} />
                       {portfolioData.location}
                     </span>
