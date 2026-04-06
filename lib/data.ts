@@ -129,20 +129,17 @@ export const portfolioData = {
   socialLinks: [
     {
       name: "GitHub",
-      url: "https://github.com",
+      url: "https://github.com/Abdul-Afeez99",
       icon: "github",
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com",
+      url: "https://www.linkedin.com/in/abdulafeez-adeyemo/",
       icon: "linkedin",
     },
-    {
-      name: "Twitter",
-      url: "https://twitter.com",
-      icon: "twitter",
-    },
   ],
+  
+  cvUrl: "/cv.pdf",
 };
 
 export type Project = typeof portfolioData.projects[0];

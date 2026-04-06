@@ -5,7 +5,8 @@ import { portfolioData } from '@/lib/data';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { ProjectCard } from '@/components/ProjectCard';
 import { HeroText } from '@/components/HeroText';
-import { ExternalLink, Github, Mail, MapPin } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { ExternalLink, Github, Mail, MapPin, Download } from 'lucide-react';
 
 const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
 
@@ -65,13 +66,19 @@ export default function Home() {
             ))}
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-2 rounded-lg bg-accent text-primary font-medium hover:bg-accent/90 transition-colors"
-          >
-            Resume
-          </motion.button>
+          <div className="flex items-center gap-4">
+            <motion.a
+              href="/cv.pdf"
+              download
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
+            >
+              <Download size={16} />
+              Resume
+            </motion.a>
+            <ThemeToggle />
+          </div>
         </div>
       </motion.nav>
 
