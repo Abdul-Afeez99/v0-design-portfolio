@@ -6,11 +6,19 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { ProjectCard } from '@/components/ProjectCard';
 import { HeroText } from '@/components/HeroText';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { ExternalLink, Github, Mail, MapPin, Download } from 'lucide-react';
+import { ExperienceTimelineScroller } from '@/components/ExperienceTimelineScroller';
+import { ExternalLink, Github, Mail, MapPin, Download, Linkedin, Phone } from 'lucide-react';
 
 const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
 
 export default function Home() {
+  const githubUrl =
+    portfolioData.socialLinks.find((link) => link.name === 'GitHub')?.url ??
+    'https://github.com';
+  const linkedinUrl =
+    portfolioData.socialLinks.find((link) => link.name === 'LinkedIn')?.url ??
+    'https://linkedin.com';
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -55,8 +63,7 @@ export default function Home() {
               <motion.a
                 key={link}
                 href={`#${link.toLowerCase()}`}
-                className="text-sm font-medium text-muted-foreground hover:text-accent transition-colors"
-                whileHover={{ color: '#00d4ff' }}
+                className="text-sm font-medium link-muted"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: index * 0.05 }}
@@ -68,14 +75,25 @@ export default function Home() {
 
           <div className="flex items-center gap-4">
             <motion.a
-              href="/cv.pdf"
+              href={portfolioData.cvUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-primary px-6 py-2"
+            >
+              <ExternalLink size={16} />
+              View Resume
+            </motion.a>
+            <motion.a
+              href={portfolioData.cvUrl}
               download
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="btn btn-outline px-4 py-2"
             >
               <Download size={16} />
-              Resume
+              Download
             </motion.a>
             <ThemeToggle />
           </div>
@@ -152,7 +170,7 @@ export default function Home() {
                 href="#projects"
                 whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-lg bg-accent text-primary font-semibold hover:bg-accent/90 transition-all"
+                className="btn btn-primary px-8 py-3 font-semibold transition-all"
               >
                 View My Work
               </motion.a>
@@ -160,7 +178,7 @@ export default function Home() {
                 href={`mailto:${portfolioData.email}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-lg border border-accent text-accent hover:bg-accent/10 font-semibold transition-all"
+                className="btn btn-outline px-8 py-3 font-semibold transition-all"
               >
                 Get In Touch
               </motion.a>
@@ -194,16 +212,22 @@ export default function Home() {
         {/* About Section */}
         <section
           id="about"
-          className="py-24 px-4 sm:px-6 lg:px-8 bg-card/30"
+          className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-card/30"
         >
           <div className="max-w-4xl mx-auto">
             <AnimatedSection className="mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-8">About Me</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                I&apos;m a backend engineer with a passion for building scalable, efficient systems that solve real-world problems. With experience across the full stack, I specialize in Node.js, TypeScript, and cloud technologies.
+                I build backend systems for products where reliability isn&apos;t a nice-to-have—it&apos;s the job. I&apos;ve helped power fintech, logistics, and marketplace platforms by shaping the infrastructure behind payments, integrations, and high-traffic APIs.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                Over the years, I&apos;ve worn different hats—from working within a core engineering team to owning backend delivery end-to-end as the only backend engineer. I enjoy taking a problem from vague requirements to a production-ready service: clear contracts, robust error handling, observability, and deployments that don&apos;t keep you up at night.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                My strongest tools are Python and TypeScript. I use them to turn complex workflows into maintainable systems with a focus on performance, security, and clean architecture—especially when there are third-party services involved and the edge cases aren&apos;t optional.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                I love the challenge of designing systems that are not just functional, but elegant and performant. When I&apos;m not coding, you can find me exploring new technologies, contributing to open source, or writing about software development.
+                Beyond the tools, I&apos;m a creative thinker and a problem solver—I enjoy breaking messy, real-world constraints into simple systems that teams can trust. Outside of work, you&apos;ll usually find me chasing new food spots, planning a trip, playing football, or getting lost in a good book.
               </p>
             </AnimatedSection>
           </div>
@@ -212,52 +236,21 @@ export default function Home() {
         {/* Experience Section */}
         <section
           id="experience"
-          className="py-24 px-4 sm:px-6 lg:px-8"
+          className="pt-12 pb-12 px-4 sm:px-6 lg:px-8"
         >
           <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12">Experience</h2>
-
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="space-y-8"
-              >
-                {portfolioData.experience.map((exp, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemVariants}
-                    className="relative pl-8 pb-8 border-l-2 border-accent/30 hover:border-accent transition-colors"
-                  >
-                    <div className="absolute -left-4 top-0 w-6 h-6 bg-accent rounded-full border-4 border-background" />
-                    <h3 className="text-2xl font-bold mb-2">{exp.role}</h3>
-                    <p className="text-accent font-semibold mb-2">{exp.company}</p>
-                    <p className="text-sm text-muted-foreground mb-4">{exp.period}</p>
-                    <p className="text-muted-foreground mb-4">{exp.description}</p>
-                    <ul className="space-y-2">
-                      {exp.highlights.map((highlight, i) => (
-                        <li
-                          key={i}
-                          className="text-muted-foreground flex items-start gap-3"
-                        >
-                          <span className="text-accent mt-1.5">›</span>
-                          {highlight}
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ))}
-              </motion.div>
+            <AnimatedSection className="mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold">Experience</h2>
             </AnimatedSection>
+
+            <ExperienceTimelineScroller experiences={portfolioData.experience} />
           </div>
         </section>
 
         {/* Projects Section */}
         <section
           id="projects"
-          className="py-24 px-4 sm:px-6 lg:px-8 bg-card/30"
+          className="pt-12 pb-24 px-4 sm:px-6 lg:px-8 bg-card/30"
         >
           <div className="max-w-6xl mx-auto">
             <AnimatedSection className="mb-16">
@@ -327,7 +320,7 @@ export default function Home() {
           id="contact"
           className="py-24 px-4 sm:px-6 lg:px-8 bg-card/30"
         >
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center">
             <AnimatedSection>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">Let&apos;s Work Together</h2>
               <p className="text-lg text-muted-foreground mb-12">
@@ -339,38 +332,51 @@ export default function Home() {
                   href={`mailto:${portfolioData.email}`}
                   whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-accent text-primary font-semibold hover:bg-accent/90 transition-all"
+                  className="btn btn-primary px-8 py-3 font-semibold transition-all"
                 >
                   <Mail size={20} />
                   Send me an email
                 </motion.a>
 
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <MapPin size={20} />
-                  <span>{portfolioData.location}</span>
-                </div>
-
-                <div className="flex gap-6 mt-4">
-                  <motion.a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1, color: '#00d4ff' }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-muted-foreground hover:text-accent transition-colors"
-                  >
-                    <Github size={24} />
-                  </motion.a>
-                  <motion.a
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1, color: '#00d4ff' }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-muted-foreground hover:text-accent transition-colors"
-                  >
-                    <ExternalLink size={24} />
-                  </motion.a>
+                <div className="w-full overflow-x-auto">
+                  <div className="mx-auto w-max flex flex-nowrap items-center justify-center gap-8 py-2 text-sm text-muted-foreground whitespace-nowrap">
+                    <a
+                      href={`mailto:${portfolioData.email}`}
+                      className="inline-flex items-center gap-2 link-muted"
+                    >
+                      <Mail size={16} />
+                      {portfolioData.email}
+                    </a>
+                    <a
+                      href={`tel:${portfolioData.phone}`}
+                      className="inline-flex items-center gap-2 link-muted"
+                    >
+                      <Phone size={16} />
+                      {portfolioData.phone}
+                    </a>
+                    <a
+                      href={githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 link-muted"
+                    >
+                      <Github size={16} />
+                      {githubUrl.replace('https://', '').replace('http://', '')}
+                    </a>
+                    <a
+                      href={linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 link-muted"
+                    >
+                      <Linkedin size={16} />
+                      {linkedinUrl.replace('https://', '').replace('http://', '')}
+                    </a>
+                    <span className="inline-flex items-center gap-2">
+                      <MapPin size={16} />
+                      {portfolioData.location}
+                    </span>
+                  </div>
                 </div>
               </div>
             </AnimatedSection>

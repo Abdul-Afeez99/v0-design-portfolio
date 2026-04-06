@@ -1,7 +1,7 @@
 export const portfolioData = {
   name: "AbdulAfeez Adeyemo",
-  title: "Backend Engineer & Full Stack Developer",
-  description: "I build scalable backend systems and full-stack applications with modern technologies. Passionate about clean code, performance optimization, and creating products that matter.",
+  title: "Backend Engineer & Systems Architect",
+  description: "I Build What Powers the Product. I am a backend engineer that specialises in building scalable APIs, payment systems, and real-time infrastructure. Passionate about systems that are fast, reliable, and built to last.",
   email: "adeyemoadebayo603@gmail.com",
   phone: "+2348146604258",
   location: "Abeokuta, Ogun State, Nigeria",

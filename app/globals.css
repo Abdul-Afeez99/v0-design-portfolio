@@ -5,46 +5,46 @@
 
 :root {
   /* Light mode - Clean, professional */
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --card: #f8f9fb;
-  --card-foreground: #1a1a1a;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
-  --primary: #3b5bdb;
+  --popover-foreground: #0f172a;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: #e8ebf5;
-  --secondary-foreground: #1a1a1a;
-  --muted: #f0f1f5;
-  --muted-foreground: #646b7a;
-  --accent: #8b5cf6;
+  --secondary: #eef2ff;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #7c3aed;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #e5e7eb;
+  --border: #e2e8f0;
   --input: #ffffff;
-  --ring: #3b5bdb;
-  --chart-1: #3b5bdb;
-  --chart-2: #8b5cf6;
+  --ring: #2563eb;
+  --chart-1: #2563eb;
+  --chart-2: #7c3aed;
   --chart-3: #06b6d4;
   --chart-4: #10b981;
   --chart-5: #f59e0b;
   --radius: 0.625rem;
-  --sidebar: #f8f9fb;
-  --sidebar-foreground: #1a1a1a;
-  --sidebar-primary: #3b5bdb;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8ebf5;
-  --sidebar-accent-foreground: #1a1a1a;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #3b5bdb;
+  --sidebar-accent: #eef2ff;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #2563eb;
 
   /* Portfolio-specific colors */
   --color-success: #10b981;
-  --color-pending: #3b5bdb;
+  --color-pending: #2563eb;
   --color-in-development: #f59e0b;
-  --color-text-muted: #646b7a;
-  --color-text-bright: #1a1a1a;
+  --color-text-muted: #64748b;
+  --color-text-bright: #0f172a;
 }
 
 .dark {
@@ -161,6 +161,26 @@
 @layer components {
   .animate-float {
     @apply animate-pulse;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90;
+  }
+
+  .btn-outline {
+    @apply border border-border bg-background/50 text-foreground hover:bg-secondary;
+  }
+
+  .btn-icon {
+    @apply bg-secondary text-foreground hover:text-accent;
+  }
+
+  .link-muted {
+    @apply text-muted-foreground hover:text-accent transition-colors;
   }
 }
 

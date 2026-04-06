@@ -47,7 +47,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
               <h3 className="text-2xl font-bold text-foreground mb-2">
                 {project.name}
               </h3>
-              <p className="text-text-muted text-sm">
+              <p className="text-muted-foreground text-sm">
                 {project.shortDescription}
               </p>
             </div>
@@ -59,7 +59,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 transition-colors"
+                className="btn btn-icon p-3 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 transition-colors"
               >
                 <ExternalLink size={20} />
               </a>
