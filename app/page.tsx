@@ -1,15 +1,19 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { portfolioData } from '@/lib/data';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { ProjectCard } from '@/components/ProjectCard';
 import { HeroText } from '@/components/HeroText';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ExperienceTimelineScroller } from '@/components/ExperienceTimelineScroller';
+import { TechMarquee } from '@/components/TechMarquee';
 import {
-  ExternalLink,
+  ArrowUpRight,
   Github,
   Mail,
   MapPin,
@@ -18,20 +22,22 @@ import {
   Phone,
   Menu,
   X,
+  ArrowDown,
 } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
 
 export default function Home() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = mobileNavOpen ? 'hidden' : '';
-
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMobileNavOpen(false);
     };
-
     window.addEventListener('keydown', onKeyDown);
     return () => {
       document.body.style.overflow = '';
@@ -39,106 +45,100 @@ export default function Home() {
     };
   }, [mobileNavOpen]);
 
+  // Parallax drift on the hero orbs + fade the hero content on scroll.
+  useGSAP(
+    () => {
+      gsap.to('.orb-1', {
+        yPercent: 40,
+        xPercent: 12,
+        ease: 'none',
+        scrollTrigger: { trigger: heroRef.current, start: 'top top', end: 'bottom top', scrub: true },
+      });
+      gsap.to('.orb-2', {
+        yPercent: -30,
+        xPercent: -10,
+        ease: 'none',
+        scrollTrigger: { trigger: heroRef.current, start: 'top top', end: 'bottom top', scrub: true },
+      });
+      gsap.to('.hero-inner', {
+        yPercent: 18,
+        opacity: 0.15,
+        ease: 'none',
+        scrollTrigger: { trigger: heroRef.current, start: 'top top', end: 'bottom top', scrub: true },
+      });
+    },
+    { scope: heroRef }
+  );
+
   const githubUrl =
-    portfolioData.socialLinks.find((link) => link.name === 'GitHub')?.url ??
+    portfolioData.socialLinks.find((l) => l.name === 'GitHub')?.url ??
     'https://github.com';
   const linkedinUrl =
-    portfolioData.socialLinks.find((link) => link.name === 'LinkedIn')?.url ??
+    portfolioData.socialLinks.find((l) => l.name === 'LinkedIn')?.url ??
     'https://linkedin.com';
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
   };
-
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
-    },
+    hidden: { opacity: 0, y: 24 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border relative"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between relative z-50">
-          <motion.a
-            href="#home"
-            className="text-xl font-bold bg-gradient-to-r from-accent to-cyan-400 bg-clip-text text-transparent"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            AA
-          </motion.a>
+      <nav className="fixed inset-x-0 top-0 z-50">
+        <div className="glass border-b border-border">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <a
+              href="#home"
+              className="flex items-center gap-2 font-display text-xl font-bold"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent font-bold text-accent-foreground">
+                A
+              </span>
+              <span className="text-gradient">AbdulAfeez</span>
+            </a>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link, index) => (
-              <motion.a
-                key={link}
-                href={`#${link.toLowerCase()}`}
-                className="text-sm font-medium link-muted"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                {link}
-              </motion.a>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-4">
-              <motion.a
-                href={portfolioData.cvUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-primary px-6 py-2"
-              >
-                <ExternalLink size={16} />
-                View Resume
-              </motion.a>
-              <motion.a
-                href={portfolioData.cvUrl}
-                download
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-outline px-4 py-2"
-              >
-                <Download size={16} />
-                Download
-              </motion.a>
-              <ThemeToggle />
+            <div className="hidden items-center gap-8 md:flex">
+              {navLinks.map((link) => (
+                <a
+                  key={link}
+                  href={`#${link.toLowerCase()}`}
+                  className="link-muted text-sm font-medium"
+                >
+                  {link}
+                </a>
+              ))}
             </div>
 
-            <div className="flex md:hidden items-center gap-3">
-              <ThemeToggle />
-              <motion.button
-                type="button"
-                onClick={() => setMobileNavOpen((v) => !v)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-outline p-2"
-                aria-label="Toggle navigation"
-                aria-expanded={mobileNavOpen}
-              >
-                {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
-              </motion.button>
+            <div className="flex items-center gap-3">
+              <div className="hidden items-center gap-3 md:flex">
+                <a
+                  href={portfolioData.cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary px-5 py-2 text-sm"
+                >
+                  Resume
+                  <ArrowUpRight size={16} />
+                </a>
+                <ThemeToggle />
+              </div>
+              <div className="flex items-center gap-3 md:hidden">
+                <ThemeToggle />
+                <button
+                  type="button"
+                  onClick={() => setMobileNavOpen((v) => !v)}
+                  className="btn btn-outline p-2"
+                  aria-label="Toggle navigation"
+                  aria-expanded={mobileNavOpen}
+                >
+                  {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-background/40 backdrop-blur-sm md:hidden z-40"
+                className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm md:hidden"
                 onClick={() => setMobileNavOpen(false)}
               />
               <motion.div
@@ -158,23 +158,22 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute top-full left-0 right-0 md:hidden border-b border-border bg-background/95 backdrop-blur-md z-50"
+                className="glass absolute inset-x-0 top-full z-50 border-b border-border md:hidden"
               >
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
                   <div className="flex flex-col">
                     {navLinks.map((link) => (
                       <a
                         key={link}
                         href={`#${link.toLowerCase()}`}
-                        className="py-3 text-base font-medium link-muted"
+                        className="link-muted py-3 text-base font-medium"
                         onClick={() => setMobileNavOpen(false)}
                       >
                         {link}
                       </a>
                     ))}
                   </div>
-
-                  <div className="pt-4 flex flex-col gap-3">
+                  <div className="flex flex-col gap-3 pt-4">
                     <a
                       href={portfolioData.cvUrl}
                       target="_blank"
@@ -182,7 +181,7 @@ export default function Home() {
                       className="btn btn-primary w-full px-4 py-3"
                       onClick={() => setMobileNavOpen(false)}
                     >
-                      <ExternalLink size={16} />
+                      <ArrowUpRight size={16} />
                       View Resume
                     </a>
                     <a
@@ -200,64 +199,55 @@ export default function Home() {
             </>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
 
-      {/* Main Content */}
-      <main className="pt-20 sm:pt-24">
-        {/* Hero Section */}
+      <main>
+        {/* Hero */}
         <section
           id="home"
-          className="min-h-[75svh] sm:min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 lg:px-8 pt-6 sm:pt-0 pb-10 sm:pb-0 relative overflow-hidden"
+          ref={heroRef}
+          className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pt-24 sm:px-6 lg:px-8"
         >
-          {/* Animated background elements */}
+          <div className="dotgrid absolute inset-0 -z-20 opacity-60" />
           <div className="absolute inset-0 -z-10">
-            <motion.div
-              className="absolute top-20 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl"
-              animate={{
-                y: [0, 30, 0],
-                x: [0, 20, 0],
-              }}
-              transition={{ duration: 8, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
-              animate={{
-                y: [0, -30, 0],
-                x: [0, -20, 0],
-              }}
-              transition={{ duration: 8, repeat: Infinity, delay: 0.5 }}
-            />
+            <div className="orb-1 absolute left-[8%] top-[18%] h-72 w-72 rounded-full bg-accent/20 blur-[100px]" />
+            <div className="orb-2 absolute bottom-[12%] right-[8%] h-96 w-96 rounded-full bg-[color:var(--chart-4)]/25 blur-[120px]" />
           </div>
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="hero-inner mx-auto max-w-4xl text-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="mb-4 sm:mb-6"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent"
             >
-              <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent border border-accent/30 text-sm font-medium">
-                Welcome to my portfolio
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
               </span>
+              Available for backend & systems work
             </motion.div>
 
             <HeroText
+              as="h1"
               text={`Hi, I'm ${portfolioData.name}`}
-              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 sm:mb-8 leading-tight"
-              delay={0.1}
+              highlight="AbdulAfeez Adeyemo"
+              className="mb-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-balance sm:text-6xl md:text-7xl"
+              delay={0.15}
             />
 
             <HeroText
+              as="p"
               text={portfolioData.title}
-              className="text-xl sm:text-2xl md:text-3xl text-accent mb-6 sm:mb-8"
-              delay={0.2}
+              className="mb-6 font-display text-xl text-accent sm:text-2xl md:text-3xl"
+              delay={0.35}
             />
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed"
+              transition={{ delay: 0.7, duration: 0.8 }}
+              className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg"
             >
               {portfolioData.description}
             </motion.p>
@@ -265,220 +255,217 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="flex flex-col items-center justify-center gap-4 sm:flex-row"
             >
-              <motion.a
-                href="#projects"
-                whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-primary w-full sm:w-auto px-8 py-3 font-semibold transition-all"
-              >
+              <a href="#projects" className="btn btn-primary w-full px-8 py-3 font-semibold sm:w-auto">
                 View My Work
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href={`mailto:${portfolioData.email}`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-outline w-full sm:w-auto px-8 py-3 font-semibold transition-all"
+                className="btn btn-outline w-full px-8 py-3 font-semibold sm:w-auto"
               >
                 Get In Touch
-              </motion.a>
+              </a>
             </motion.div>
+          </div>
 
-            {/* Scroll indicator */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 0.8 }}
-              className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          <motion.a
+            href="#about"
+            aria-label="Scroll to content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.1, duration: 0.8 }}
+            className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-muted-foreground"
+          >
+            <span className="text-xs uppercase tracking-widest">Scroll</span>
+            <motion.span
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
             >
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="flex flex-col items-center gap-2"
-              >
-                <span className="text-sm text-muted-foreground">Scroll to explore</span>
-                <div className="w-6 h-10 border-2 border-accent rounded-full flex items-start justify-center p-2">
-                  <motion.div
-                    animate={{ y: [0, 8, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-1 h-2 bg-accent rounded-full"
-                  />
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+              <ArrowDown size={18} className="text-accent" />
+            </motion.span>
+          </motion.a>
         </section>
 
-        {/* About Section */}
-        <section
-          id="about"
-          className="pt-12 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-card/30"
-        >
-          <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-8 sm:mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 sm:mb-8">About Me</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                I build backend systems for products where reliability isn&apos;t a nice-to-have—it&apos;s the job. I&apos;ve helped power fintech, logistics, and marketplace platforms by shaping the infrastructure behind payments, integrations, and high-traffic APIs.
+        {/* Tech marquee */}
+        <TechMarquee />
+
+        {/* About */}
+        <section id="about" className="px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <AnimatedSection>
+              <p className="mb-4 font-mono text-sm uppercase tracking-widest text-accent">
+                01 — About
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Over the years, I&apos;ve worn different hats—from working within a core engineering team to owning backend delivery end-to-end as the only backend engineer. I enjoy taking a problem from vague requirements to a production-ready service: clear contracts, robust error handling, observability, and deployments that don&apos;t keep you up at night.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                My strongest tools are Python and TypeScript. I use them to turn complex workflows into maintainable systems with a focus on performance, security, and clean architecture—especially when there are third-party services involved and the edge cases aren&apos;t optional.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Beyond the tools, I&apos;m a creative thinker and a problem solver—I enjoy breaking messy, real-world constraints into simple systems that teams can trust. Outside of work, you&apos;ll usually find me chasing new food spots, planning a trip, playing football, or getting lost in a good book.
-              </p>
+              <h2 className="mb-8 font-display text-4xl font-bold md:text-5xl">
+                Building what powers the product
+              </h2>
+              <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
+                <p>
+                  I build backend systems for products where reliability isn&apos;t a nice-to-have—it&apos;s the job. I&apos;ve helped power fintech, logistics, and marketplace platforms by shaping the infrastructure behind payments, integrations, and high-traffic APIs.
+                </p>
+                <p>
+                  Over the years, I&apos;ve worn different hats—from working within a core engineering team to owning backend delivery end-to-end as the only backend engineer. I enjoy taking a problem from vague requirements to a production-ready service: clear contracts, robust error handling, observability, and deployments that don&apos;t keep you up at night.
+                </p>
+                <p>
+                  My strongest tools are Python and TypeScript. I use them to turn complex workflows into maintainable systems with a focus on performance, security, and clean architecture—especially when there are third-party services involved and the edge cases aren&apos;t optional.
+                </p>
+                <p>
+                  Beyond the tools, I&apos;m a creative thinker and a problem solver—I enjoy breaking messy, real-world constraints into simple systems that teams can trust. Outside of work, you&apos;ll usually find me chasing new food spots, planning a trip, playing football, or getting lost in a good book.
+                </p>
+              </div>
             </AnimatedSection>
           </div>
         </section>
 
-        {/* Experience Section */}
-        <section
-          id="experience"
-          className="pt-8 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8"
-        >
-          <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-8 sm:mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold">Experience</h2>
+        {/* Experience */}
+        <section id="experience" className="px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <AnimatedSection className="mb-4">
+              <p className="mb-4 font-mono text-sm uppercase tracking-widest text-accent">
+                02 — Experience
+              </p>
+              <h2 className="font-display text-4xl font-bold md:text-5xl">
+                Where I&apos;ve shipped
+              </h2>
             </AnimatedSection>
-
             <ExperienceTimelineScroller experiences={portfolioData.experience} />
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section
-          id="projects"
-          className="pt-8 sm:pt-12 pb-12 sm:pb-24 px-4 sm:px-6 lg:px-8 bg-card/30"
-        >
-          <div className="max-w-6xl mx-auto">
-            <AnimatedSection className="mb-8 sm:mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
-              <p className="text-lg text-muted-foreground">
-                Here are some of my recent projects that showcase my skills and expertise.
+        {/* Projects */}
+        <section id="projects" className="px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <AnimatedSection className="mb-14">
+              <p className="mb-4 font-mono text-sm uppercase tracking-widest text-accent">
+                03 — Projects
               </p>
+              <h2 className="mb-4 font-display text-4xl font-bold md:text-5xl">
+                Featured work
+              </h2>
+              <p className="max-w-2xl text-lg text-muted-foreground">
+                A selection of recent projects that showcase how I design and ship backend systems.
+              </p>
+            </AnimatedSection>
+
+            <div className="grid gap-8">
+              {portfolioData.projects.map((project, index) => (
+                <AnimatedSection key={project.id} delay={index * 0.05}>
+                  <ProjectCard project={project} index={index} />
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Skills */}
+        <section id="skills" className="px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <AnimatedSection className="mb-14">
+              <p className="mb-4 font-mono text-sm uppercase tracking-widest text-accent">
+                04 — Skills
+              </p>
+              <h2 className="font-display text-4xl font-bold md:text-5xl">
+                Tools &amp; technologies
+              </h2>
             </AnimatedSection>
 
             <motion.div
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
-              className="grid md:grid-cols-1 gap-8"
+              viewport={{ once: true, margin: '-80px' }}
+              className="grid gap-8 md:grid-cols-2"
             >
-              {portfolioData.projects.map((project, index) => (
-                <motion.div key={project.id} variants={itemVariants}>
-                  <ProjectCard project={project} index={index} />
+              {Object.entries(portfolioData.skills).map(([category, skills]) => (
+                <motion.div
+                  key={category}
+                  variants={itemVariants}
+                  className="rounded-2xl border border-border bg-card p-6 transition-colors duration-300 hover:border-accent/40"
+                >
+                  <h3 className="mb-4 font-display text-lg font-bold capitalize text-accent">
+                    {category.replace(/([A-Z])/g, ' $1')}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm text-foreground transition-colors duration-300 hover:border-accent/50 hover:text-accent"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* Skills Section */}
-        <section
-          id="skills"
-          className="py-12 sm:py-24 px-4 sm:px-6 lg:px-8"
-        >
-          <div className="max-w-4xl mx-auto">
-            <AnimatedSection className="mb-8 sm:mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-8">Skills & Technologies</h2>
-
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="grid md:grid-cols-2 gap-8"
-              >
-                {Object.entries(portfolioData.skills).map(([category, skills]) => (
-                  <motion.div key={category} variants={itemVariants}>
-                    <h3 className="text-xl font-bold mb-4 capitalize">
-                      {category.replace(/([A-Z])/g, ' $1')}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {skills.map((skill) => (
-                        <motion.span
-                          key={skill}
-                          whileHover={{ scale: 1.1, y: -2 }}
-                          className="px-4 py-2 rounded-lg bg-secondary text-foreground hover:text-accent transition-colors cursor-default"
-                        >
-                          {skill}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatedSection>
+        {/* Contact */}
+        <section id="contact" className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-32 lg:px-8">
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[120px]" />
           </div>
-        </section>
-
-        {/* Contact Section */}
-        <section
-          id="contact"
-          className="py-12 sm:py-24 px-4 sm:px-6 lg:px-8 bg-card/30"
-        >
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <AnimatedSection>
-              <h2 className="text-4xl md:text-5xl font-bold mb-5 sm:mb-6">Let&apos;s Work Together</h2>
-              <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-12">
+              <p className="mb-4 font-mono text-sm uppercase tracking-widest text-accent">
+                05 — Contact
+              </p>
+              <h2 className="mb-6 font-display text-4xl font-bold md:text-6xl text-balance">
+                Let&apos;s build something reliable
+              </h2>
+              <p className="mb-10 text-lg text-muted-foreground">
                 I&apos;m always interested in hearing about new projects and opportunities.
               </p>
 
-              <div className="flex flex-col items-center gap-6">
-                <motion.a
+              <div className="flex flex-col items-center gap-8">
+                <a
                   href={`mailto:${portfolioData.email}`}
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="btn btn-primary w-full sm:w-auto px-6 sm:px-8 py-3 font-semibold transition-all"
+                  className="btn btn-primary px-8 py-4 text-base font-semibold"
                 >
                   <Mail size={20} />
                   Send me an email
-                </motion.a>
+                </a>
 
-                <div className="w-full">
-                  <div className="mx-auto flex flex-wrap sm:flex-nowrap items-center justify-center gap-3 sm:gap-6">
-                    <a
-                      href={`mailto:${portfolioData.email}`}
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
-                    >
-                      <Mail size={16} />
-                      {portfolioData.email}
-                    </a>
-                    <a
-                      href={`tel:${portfolioData.phone}`}
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
-                    >
-                      <Phone size={16} />
-                      {portfolioData.phone}
-                    </a>
-                    <a
-                      href={githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
-                    >
-                      <Github size={16} />
-                      {githubUrl.replace('https://', '').replace('http://', '')}
-                    </a>
-                    <a
-                      href={linkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm link-muted"
-                    >
-                      <Linkedin size={16} />
-                      {linkedinUrl.replace('https://', '').replace('http://', '')}
-                    </a>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm text-muted-foreground">
-                      <MapPin size={16} />
-                      {portfolioData.location}
-                    </span>
-                  </div>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <a
+                    href={`mailto:${portfolioData.email}`}
+                    className="link-muted inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm"
+                  >
+                    <Mail size={16} />
+                    {portfolioData.email}
+                  </a>
+                  <a
+                    href={`tel:${portfolioData.phone}`}
+                    className="link-muted inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm"
+                  >
+                    <Phone size={16} />
+                    {portfolioData.phone}
+                  </a>
+                  <a
+                    href={githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-muted inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm"
+                  >
+                    <Github size={16} />
+                    {githubUrl.replace(/^https?:\/\//, '')}
+                  </a>
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-muted inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm"
+                  >
+                    <Linkedin size={16} />
+                    {linkedinUrl.replace(/^https?:\/\//, '')}
+                  </a>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm text-muted-foreground">
+                    <MapPin size={16} />
+                    {portfolioData.location}
+                  </span>
                 </div>
               </div>
             </AnimatedSection>
@@ -486,20 +473,14 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="py-8 px-4 sm:px-6 lg:px-8 border-t border-border bg-card/30"
-      >
-        <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
+      <footer className="border-t border-border px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-sm text-muted-foreground sm:flex-row">
           <p>
-            Built with Next.js, TypeScript, Tailwind CSS & Framer Motion. 
-            <span className="text-accent"> © 2024 AbdulAfeez Adeyemo</span>
+            Built with Next.js, TypeScript, Tailwind &amp; GSAP.
           </p>
+          <p className="text-accent">© 2026 AbdulAfeez Adeyemo</p>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   );
 }
