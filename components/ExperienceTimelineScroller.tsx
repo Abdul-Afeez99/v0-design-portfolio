@@ -1,7 +1,7 @@
 'use client';
 
-import { AnimatePresence, motion, useScroll } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { useRef } from 'react';
 import type { Experience } from '@/lib/data';
 
 type ExperienceTimelineScrollerProps = {
@@ -11,95 +11,101 @@ type ExperienceTimelineScrollerProps = {
 export function ExperienceTimelineScroller({
   experiences,
 }: ExperienceTimelineScrollerProps) {
-  const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const { scrollYProgress } = useScroll({
-    target: rootRef,
-    offset: ['start start', 'end end'],
+    target: containerRef,
+    offset: ['start 85%', 'end 60%'],
   });
 
-  useEffect(() => {
-    if (experiences.length <= 1) return;
-
-    const unsubscribe = scrollYProgress.on('change', (p) => {
-      const clamped = Math.min(0.999999, Math.max(0, p));
-      const nextIndex = Math.min(
-        experiences.length - 1,
-        Math.max(0, Math.floor(clamped * experiences.length))
-      );
-
-      setIndex((prev) => {
-        if (prev === nextIndex) return prev;
-        setDirection(nextIndex > prev ? 1 : -1);
-        return nextIndex;
-      });
-    });
-
-    return () => unsubscribe();
-  }, [experiences.length, scrollYProgress]);
+  // Smooth, progress-driven line that "draws" as you scroll through the section.
+  const lineScaleY = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   if (experiences.length === 0) return null;
 
-  const exp = experiences[index];
+  return (
+    <div ref={containerRef} className="relative">
+      {/* Timeline rail (background track) */}
+      <div className="absolute left-[7px] top-2 bottom-2 w-px bg-border sm:left-[11px]" />
 
-  const variants = {
-    enter: (dir: 1 | -1) => ({
-      y: dir === 1 ? 32 : -32,
-      opacity: 0,
-      scale: 0.98,
-      filter: 'blur(6px)',
-    }),
-    center: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      filter: 'blur(0px)',
-      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-    },
-    exit: (dir: 1 | -1) => ({
-      y: dir === 1 ? -32 : 32,
-      opacity: 0,
-      scale: 0.98,
-      filter: 'blur(6px)',
-      transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
-    }),
-  };
+      {/* Timeline rail (animated progress fill) */}
+      <motion.div
+        style={{ scaleY: lineScaleY }}
+        className="absolute left-[7px] top-2 bottom-2 w-px origin-top bg-accent sm:left-[11px]"
+      />
+
+      <ol className="space-y-10 sm:space-y-14">
+        {experiences.map((exp, i) => (
+          <TimelineItem key={`${exp.company}-${i}`} exp={exp} index={i} />
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function TimelineItem({ exp, index }: { exp: Experience; index: number }) {
+  const itemRef = useRef<HTMLLIElement | null>(null);
 
   return (
-    <div
-      ref={rootRef}
-      className="relative"
-      style={{ height: `${Math.max(1, experiences.length) * 100}vh` }}
+    <motion.li
+      ref={itemRef}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+        delay: Math.min(index * 0.05, 0.2),
+      }}
+      className="relative pl-8 sm:pl-12"
     >
-      <div className="sticky top-24 h-[calc(100vh-6rem)] flex items-center py-10">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
-          <motion.div
-            key={index}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="relative w-full pl-8 pb-4 border-l-2 border-accent/30 hover:border-accent transition-colors"
-          >
-            <div className="absolute -left-4 top-0 w-6 h-6 bg-accent rounded-full border-4 border-background" />
-            <h3 className="text-3xl md:text-4xl font-bold mb-3">{exp.role}</h3>
-            <p className="text-accent text-lg md:text-xl font-semibold mb-3">{exp.company}</p>
-            <p className="text-base md:text-lg text-muted-foreground mb-5">{exp.period}</p>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">{exp.description}</p>
-            <ul className="space-y-3">
-              {exp.highlights.map((highlight, i) => (
-                <li key={i} className="text-base md:text-lg text-muted-foreground flex items-start gap-3 leading-relaxed">
-                  <span className="text-accent mt-1.5">›</span>
-                  {highlight}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </AnimatePresence>
+      {/* Node dot */}
+      <motion.span
+        initial={{ scale: 0, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.4, ease: 'backOut', delay: 0.1 }}
+        className="absolute left-0 top-1.5 flex h-4 w-4 items-center justify-center sm:h-6 sm:w-6"
+      >
+        <span className="absolute inline-flex h-full w-full rounded-full bg-accent/30" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-accent ring-4 ring-background sm:h-2.5 sm:w-2.5" />
+      </motion.span>
+
+      <div className="group rounded-2xl border border-border bg-card/40 p-6 transition-colors hover:border-accent/50 sm:p-8">
+        <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+          <div>
+            <h3 className="text-xl font-bold text-foreground sm:text-2xl">
+              {exp.role}
+            </h3>
+            <p className="text-base font-semibold text-accent sm:text-lg">
+              {exp.company}
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full border border-border bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground sm:text-sm">
+            {exp.period}
+          </span>
+        </div>
+
+        <p className="mb-5 leading-relaxed text-muted-foreground">
+          {exp.description}
+        </p>
+
+        <ul className="space-y-2.5">
+          {exp.highlights.map((highlight, i) => (
+            <li
+              key={i}
+              className="flex items-start gap-3 leading-relaxed text-muted-foreground"
+            >
+              <span className="mt-1.5 text-accent">›</span>
+              <span>{highlight}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+    </motion.li>
   );
 }
