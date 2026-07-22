@@ -10,13 +10,11 @@ import {
 import { useRef } from 'react';
 import type { Experience } from '@/lib/data';
 
-type ExperienceTimelineScrollerProps = {
+type Props = {
   experiences: Experience[];
 };
 
-export function ExperienceTimelineScroller({
-  experiences,
-}: ExperienceTimelineScrollerProps) {
+export function ExperienceTimelineScroller({ experiences }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const { scrollYProgress } = useScroll({

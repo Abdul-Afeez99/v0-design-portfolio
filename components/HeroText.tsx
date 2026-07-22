@@ -1,52 +1,65 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef, type ElementType } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 interface HeroTextProps {
   text: string;
   className?: string;
   delay?: number;
+  /** Highlight the given substring with the amber gradient. */
+  highlight?: string;
+  as?: 'h1' | 'h2' | 'p' | 'div';
 }
 
-export function HeroText({ text, className = '', delay = 0 }: HeroTextProps) {
+export function HeroText({
+  text,
+  className = '',
+  delay = 0,
+  highlight,
+  as = 'div',
+}: HeroTextProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const Tag: ElementType = as;
   const words = text.split(' ');
 
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: delay * i },
-    }),
-  };
+  useGSAP(
+    () => {
+      const chars = ref.current?.querySelectorAll('.hero-char');
+      if (!chars || chars.length === 0) return;
+      gsap.from(chars, {
+        yPercent: 120,
+        opacity: 0,
+        rotateX: -80,
+        stagger: 0.02,
+        duration: 0.9,
+        delay,
+        ease: 'power4.out',
+      });
+    },
+    { scope: ref, dependencies: [text] }
+  );
 
-  const child = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: 'spring',
-        damping: 12,
-        stiffness: 100,
-      },
-    },
-  };
+  const isHighlighted = (word: string) =>
+    highlight ? highlight.toLowerCase().includes(word.toLowerCase()) : false;
 
   return (
-    <motion.div
-      className={className}
-      variants={container}
-      initial="hidden"
-      animate="visible"
-    >
-      {words.map((word, index) => (
-        <motion.span key={index} variants={child} className="inline-block mr-2">
-          {word}
-        </motion.span>
+    <Tag ref={ref as never} className={className} style={{ perspective: 800 }}>
+      {words.map((word, wi) => (
+        <span
+          key={wi}
+          className={`inline-block mr-[0.25em] overflow-hidden align-bottom ${
+            isHighlighted(word) ? 'text-accent' : ''
+          }`}
+        >
+          {word.split('').map((char, ci) => (
+            <span key={ci} className="hero-char inline-block">
+              {char}
+            </span>
+          ))}
+        </span>
       ))}
-    </motion.div>
+    </Tag>
   );
 }
