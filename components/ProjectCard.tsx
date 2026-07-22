@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import { useRef } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { Project } from '@/lib/data';
 
 interface ProjectCardProps {
@@ -10,100 +10,104 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, index }: ProjectCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-[color:var(--color-success)]/15 text-[color:var(--color-success)] border-[color:var(--color-success)]/30';
       case 'pending':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-accent/15 text-accent border-accent/30';
       case 'in-development':
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+        return 'bg-[color:var(--color-in-development)]/15 text-[color:var(--color-in-development)] border-[color:var(--color-in-development)]/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-muted text-muted-foreground border-border';
     }
   };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      className="group relative"
-    >
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur" />
+  // Spotlight follows the pointer inside the card.
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+  };
 
-      <div className="relative bg-card border border-border rounded-2xl p-8 overflow-hidden">
-        {/* Animated background grid */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-transparent" />
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={onMove}
+      data-cursor-hover
+      className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 transition-colors duration-500 hover:border-accent/40"
+    >
+      {/* Pointer spotlight */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          background:
+            'radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--glow) / 0.12), transparent 60%)',
+        }}
+      />
+      {/* Big index watermark */}
+      <span className="pointer-events-none absolute -right-4 -top-8 font-display text-9xl font-bold text-accent/5 select-none">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+
+      <div className="relative z-10">
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h3 className="mb-2 font-display text-2xl font-bold text-foreground">
+              {project.name}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {project.shortDescription}
+            </p>
+          </div>
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${project.name}`}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-foreground transition-all duration-300 group-hover:border-accent group-hover:text-accent group-hover:rotate-45"
+          >
+            <ArrowUpRight size={20} />
+          </a>
         </div>
 
-        <div className="relative z-10">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">
-                {project.name}
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                {project.shortDescription}
-              </p>
-            </div>
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 45 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-icon p-3 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 transition-colors"
-              >
-                <ExternalLink size={20} />
-              </a>
-            </motion.div>
-          </div>
+        <div className="mb-6 flex items-center gap-3">
+          <span
+            className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${getStatusColor(
+              project.status
+            )}`}
+          >
+            {project.statusLabel}
+          </span>
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-sm text-accent hover:underline"
+          >
+            View Project
+          </a>
+        </div>
 
-          {/* Status Badge */}
-          <div className="mb-6 flex items-center gap-3">
+        <p className="mb-6 leading-relaxed text-muted-foreground">
+          {project.fullDescription}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {project.tech.map((tech) => (
             <span
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(
-                project.status
-              )}`}
+              key={tech}
+              className="rounded-full border border-border bg-secondary px-3 py-1 text-xs text-muted-foreground transition-colors duration-300 hover:border-accent/40 hover:text-accent"
             >
-              {project.statusLabel}
+              {tech}
             </span>
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-accent hover:underline flex items-center gap-1"
-            >
-              View Project
-            </a>
-          </div>
-
-          {/* Description */}
-          <p className="text-muted-foreground mb-6 leading-relaxed">
-            {project.fullDescription}
-          </p>
-
-          {/* Tech Stack */}
-          <div className="flex flex-wrap gap-2">
-            {project.tech.map((tech) => (
-              <motion.span
-                key={tech}
-                whileHover={{ scale: 1.05 }}
-                className="px-3 py-1 rounded-full text-xs bg-secondary text-muted-foreground hover:text-accent transition-colors"
-              >
-                {tech}
-              </motion.span>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

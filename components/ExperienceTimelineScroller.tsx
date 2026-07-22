@@ -1,104 +1,119 @@
 'use client';
 
-import { AnimatePresence, motion, useScroll } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import type { Experience } from '@/lib/data';
 
-type ExperienceTimelineScrollerProps = {
+gsap.registerPlugin(ScrollTrigger);
+
+type Props = {
   experiences: Experience[];
 };
 
-export function ExperienceTimelineScroller({
-  experiences,
-}: ExperienceTimelineScrollerProps) {
+export function ExperienceTimelineScroller({ experiences }: Props) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const activeRef = useRef(0);
 
-  const { scrollYProgress } = useScroll({
-    target: rootRef,
-    offset: ['start start', 'end end'],
-  });
+  useGSAP(
+    () => {
+      if (experiences.length === 0) return;
 
-  useEffect(() => {
-    if (experiences.length <= 1) return;
-
-    const unsubscribe = scrollYProgress.on('change', (p) => {
-      const clamped = Math.min(0.999999, Math.max(0, p));
-      const nextIndex = Math.min(
-        experiences.length - 1,
-        Math.max(0, Math.floor(clamped * experiences.length))
-      );
-
-      setIndex((prev) => {
-        if (prev === nextIndex) return prev;
-        setDirection(nextIndex > prev ? 1 : -1);
-        return nextIndex;
+      const st = ScrollTrigger.create({
+        trigger: rootRef.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        onUpdate: (self) => {
+          const next = Math.min(
+            experiences.length - 1,
+            Math.floor(self.progress * experiences.length)
+          );
+          if (next !== activeRef.current) {
+            activeRef.current = next;
+            setIndex(next);
+            // Re-animate the card whenever the active entry changes.
+            gsap.fromTo(
+              cardRef.current,
+              { autoAlpha: 0, y: 30, filter: 'blur(6px)' },
+              {
+                autoAlpha: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                duration: 0.5,
+                ease: 'power3.out',
+                overwrite: true,
+              }
+            );
+          }
+        },
       });
-    });
 
-    return () => unsubscribe();
-  }, [experiences.length, scrollYProgress]);
+      return () => st.kill();
+    },
+    { scope: rootRef, dependencies: [experiences.length] }
+  );
 
   if (experiences.length === 0) return null;
-
   const exp = experiences[index];
-
-  const variants = {
-    enter: (dir: 1 | -1) => ({
-      y: dir === 1 ? 32 : -32,
-      opacity: 0,
-      scale: 0.98,
-      filter: 'blur(6px)',
-    }),
-    center: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      filter: 'blur(0px)',
-      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-    },
-    exit: (dir: 1 | -1) => ({
-      y: dir === 1 ? -32 : 32,
-      opacity: 0,
-      scale: 0.98,
-      filter: 'blur(6px)',
-      transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
-    }),
-  };
 
   return (
     <div
       ref={rootRef}
       className="relative"
-      style={{ height: `${Math.max(1, experiences.length) * 100}vh` }}
+      style={{ height: `${Math.max(1, experiences.length) * 90}vh` }}
     >
-      <div className="sticky top-24 h-[calc(100vh-6rem)] flex items-center py-10">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
-          <motion.div
-            key={index}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="relative w-full pl-8 pb-4 border-l-2 border-accent/30 hover:border-accent transition-colors"
+      <div className="sticky top-24 flex h-[calc(100vh-6rem)] items-center py-10">
+        <div className="w-full">
+          {/* progress rail */}
+          <div className="mb-8 flex items-center gap-2">
+            {experiences.map((_, i) => (
+              <span
+                key={i}
+                className={`h-1 rounded-full transition-all duration-500 ${
+                  i === index ? 'w-10 bg-accent' : 'w-4 bg-border'
+                }`}
+              />
+            ))}
+            <span className="ml-3 font-mono text-sm text-muted-foreground">
+              {String(index + 1).padStart(2, '0')} /{' '}
+              {String(experiences.length).padStart(2, '0')}
+            </span>
+          </div>
+
+          <div
+            ref={cardRef}
+            className="relative border-l-2 border-accent/40 pb-4 pl-8"
           >
-            <div className="absolute -left-4 top-0 w-6 h-6 bg-accent rounded-full border-4 border-background" />
-            <h3 className="text-3xl md:text-4xl font-bold mb-3">{exp.role}</h3>
-            <p className="text-accent text-lg md:text-xl font-semibold mb-3">{exp.company}</p>
-            <p className="text-base md:text-lg text-muted-foreground mb-5">{exp.period}</p>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">{exp.description}</p>
+            <span className="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-accent shadow-[0_0_20px_rgb(var(--glow)/0.7)]" />
+            <p className="mb-3 font-mono text-sm uppercase tracking-widest text-accent">
+              {exp.period}
+            </p>
+            <h3 className="mb-2 font-display text-3xl font-bold md:text-5xl">
+              {exp.role}
+            </h3>
+            <p className="mb-4 text-lg font-semibold text-muted-foreground md:text-xl">
+              {exp.company}
+            </p>
+            <p className="mb-6 max-w-2xl leading-relaxed text-muted-foreground">
+              {exp.description}
+            </p>
             <ul className="space-y-3">
               {exp.highlights.map((highlight, i) => (
-                <li key={i} className="text-base md:text-lg text-muted-foreground flex items-start gap-3 leading-relaxed">
-                  <span className="text-accent mt-1.5">›</span>
+                <li
+                  key={i}
+                  className="flex items-start gap-3 leading-relaxed text-muted-foreground"
+                >
+                  <span className="mt-1.5 text-accent">›</span>
                   {highlight}
                 </li>
               ))}
             </ul>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </div>
       </div>
     </div>
   );

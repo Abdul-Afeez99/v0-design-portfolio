@@ -4,95 +4,92 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Light mode - Clean, professional */
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  /* Light mode - warm parchment with amber accent */
+  --background: #faf7f1;
+  --foreground: #1c160f;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #1c160f;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --secondary: #eef2ff;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #7c3aed;
-  --accent-foreground: #ffffff;
+  --popover-foreground: #1c160f;
+  --primary: #b45309;
+  --primary-foreground: #fffbf5;
+  --secondary: #f1e9dc;
+  --secondary-foreground: #1c160f;
+  --muted: #f1e9dc;
+  --muted-foreground: #78716c;
+  --accent: #d97706;
+  --accent-foreground: #fffbf5;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
+  --border: #e7ddcc;
   --input: #ffffff;
-  --ring: #2563eb;
-  --chart-1: #2563eb;
-  --chart-2: #7c3aed;
-  --chart-3: #06b6d4;
-  --chart-4: #10b981;
-  --chart-5: #f59e0b;
-  --radius: 0.625rem;
+  --ring: #d97706;
+  --chart-1: #d97706;
+  --chart-2: #f59e0b;
+  --chart-3: #b45309;
+  --chart-4: #92400e;
+  --chart-5: #fbbf24;
+  --radius: 0.75rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #2563eb;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef2ff;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #2563eb;
+  --sidebar-foreground: #1c160f;
+  --sidebar-primary: #d97706;
+  --sidebar-primary-foreground: #fffbf5;
+  --sidebar-accent: #f1e9dc;
+  --sidebar-accent-foreground: #1c160f;
+  --sidebar-border: #e7ddcc;
+  --sidebar-ring: #d97706;
 
-  /* Portfolio-specific colors */
-  --color-success: #10b981;
-  --color-pending: #2563eb;
+  --color-success: #16a34a;
+  --color-pending: #d97706;
   --color-in-development: #f59e0b;
-  --color-text-muted: #64748b;
-  --color-text-bright: #0f172a;
+  --glow: 245 158 11;
 }
 
 .dark {
-  /* Dark mode - Rich, elegant */
-  --background: #0a0e27;
-  --foreground: #f5f5f5;
-  --card: #0f1429;
-  --card-foreground: #f5f5f5;
-  --popover: #0f1429;
-  --popover-foreground: #f5f5f5;
-  --primary: #7c3aed;
-  --primary-foreground: #ffffff;
-  --secondary: #1e2441;
-  --secondary-foreground: #f5f5f5;
-  --muted: #1e2441;
-  --muted-foreground: #9ca3af;
-  --accent: #8b5cf6;
-  --accent-foreground: #ffffff;
+  /* Dark mode - near-black warm with glowing amber accent */
+  --background: #0a0805;
+  --foreground: #f3ede1;
+  --card: #14100a;
+  --card-foreground: #f3ede1;
+  --popover: #14100a;
+  --popover-foreground: #f3ede1;
+  --primary: #f59e0b;
+  --primary-foreground: #1a1204;
+  --secondary: #1e1810;
+  --secondary-foreground: #f3ede1;
+  --muted: #1a140d;
+  --muted-foreground: #a89e8c;
+  --accent: #f5a623;
+  --accent-foreground: #1a1204;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #1e2441;
-  --input: #0f1429;
-  --ring: #8b5cf6;
-  --chart-1: #7c3aed;
-  --chart-2: #8b5cf6;
-  --chart-3: #06b6d4;
-  --chart-4: #10b981;
-  --chart-5: #f59e0b;
-  --sidebar: #0f1429;
-  --sidebar-foreground: #f5f5f5;
-  --sidebar-primary: #8b5cf6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1e2441;
-  --sidebar-accent-foreground: #f5f5f5;
-  --sidebar-border: #1e2441;
-  --sidebar-ring: #8b5cf6;
+  --border: #2a2115;
+  --input: #14100a;
+  --ring: #f5a623;
+  --chart-1: #f5a623;
+  --chart-2: #fbbf24;
+  --chart-3: #d97706;
+  --chart-4: #b45309;
+  --chart-5: #fcd34d;
+  --sidebar: #14100a;
+  --sidebar-foreground: #f3ede1;
+  --sidebar-primary: #f5a623;
+  --sidebar-primary-foreground: #1a1204;
+  --sidebar-accent: #1e1810;
+  --sidebar-accent-foreground: #f3ede1;
+  --sidebar-border: #2a2115;
+  --sidebar-ring: #f5a623;
 
-  /* Portfolio-specific colors */
-  --color-success: #10b981;
-  --color-pending: #7c3aed;
-  --color-in-development: #f59e0b;
-  --color-text-muted: #9ca3af;
-  --color-text-bright: #f5f5f5;
+  --color-success: #4ade80;
+  --color-pending: #f5a623;
+  --color-in-development: #fbbf24;
+  --glow: 245 166 35;
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: var(--font-geist), 'Geist Fallback', system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback', monospace;
+  --font-display: var(--font-space-grotesk), var(--font-geist), sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -138,41 +135,30 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+  /* Hide native cursor on devices with a fine pointer so the custom glow leads */
+  @media (pointer: fine) {
+    html.has-custom-cursor,
+    html.has-custom-cursor * {
+      cursor: none;
+    }
   }
 }
 
 @layer components {
-  .animate-float {
-    @apply animate-pulse;
-  }
-
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply bg-accent text-accent-foreground hover:bg-accent/90;
+    @apply bg-accent text-accent-foreground hover:brightness-110;
+    box-shadow: 0 0 0 0 rgb(var(--glow) / 0);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 8px 40px -6px rgb(var(--glow) / 0.55);
   }
 
   .btn-outline {
-    @apply border border-border bg-background/50 text-foreground hover:bg-secondary;
+    @apply border border-border bg-card/40 text-foreground hover:border-accent/60 hover:text-accent;
   }
 
   .btn-icon {
@@ -180,11 +166,70 @@
   }
 
   .link-muted {
-    @apply text-muted-foreground hover:text-accent transition-colors;
+    @apply text-muted-foreground transition-colors duration-300 hover:text-accent;
+  }
+
+  /* Amber gradient text */
+  .text-gradient {
+    background: linear-gradient(120deg, var(--accent) 0%, var(--chart-2) 45%, var(--foreground) 120%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    background: color-mix(in oklab, var(--card) 65%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 }
 
-/* Smooth scrolling */
+/* Subtle film grain / noise overlay driver */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dotgrid {
+  background-image: radial-gradient(rgb(var(--glow) / 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* GSAP reveal helper: hidden until ScrollTrigger enables it (avoids FOUC) */
+.gsap-reveal {
+  opacity: 0;
+}
+html.gsap-ready .gsap-reveal {
+  visibility: visible;
+}
+
+/* Fallback so content is never permanently hidden if JS fails */
+@media (prefers-reduced-motion: reduce) {
+  .gsap-reveal { opacity: 1 !important; transform: none !important; }
+  .animate-marquee { animation: none; }
+}
+
 html {
   scroll-behavior: smooth;
+}
+html.lenis-active {
+  scroll-behavior: auto;
 }
