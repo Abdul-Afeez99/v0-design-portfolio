@@ -139,7 +139,7 @@ export const portfolioData = {
     },
   ],
   
-  cvUrl: "/cv.pdf",
+  cvUrl: "./public/cv.pdf",
 };
 
 export type Project = typeof portfolioData.projects[0];
