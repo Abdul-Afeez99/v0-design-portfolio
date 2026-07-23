@@ -46,7 +46,7 @@ export const portfolioData = {
     {
       company: "Kormart",
       role: "Contract Backend Engineer (NestJS)",
-      period: "Oct 2025 - Present",
+      period: "Oct 2025 - Apr 2026",
       description: "6-month contract as sole backend engineer for P2P e-commerce platform",
       highlights: [
         "Designed, built, and maintained all core backend services using NestJS for P2P marketplace",
@@ -70,7 +70,7 @@ export const portfolioData = {
     {
       company: "Instaflow",
       role: "Contract Python Backend Developer",
-      period: "Oct 2024 - Present",
+      period: "Oct 2024 - Feb 2026",
       description: "Contract backend developer for cross-border fintech platform",
       highlights: [
         "Built and maintained core backend service using FastAPI and PostgreSQL",
